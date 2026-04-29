@@ -26,10 +26,10 @@ npm install
 \`\`\`
 
 ### 2. Environment Variables
-In the \`backend\` folder, rename \`.env.example\` to \`.env\` and add your OpenAI API Key:
+In the `backend` folder, rename `.env.example` to `.env` and add your Gemini API Key:
 \`\`\`
-OPENAI_API_KEY=your_key_here
-PORT=5000
+GEMINI_API_KEY=your_key_here
+PORT=5001
 \`\`\`
 
 ### 3. Run Locally
