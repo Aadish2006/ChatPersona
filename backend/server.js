@@ -38,8 +38,8 @@ app.post('/api/chat', async (req, res) => {
   try {
     const systemPrompt = getSystemPrompt(persona);
     
-    // We use gemini-2.5-flash which is supported by your API key in this version
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    // Use gemini-flash-latest to automatically route to the most stable cluster
+    const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
 
     // Construct a single robust prompt to avoid strict ChatSession formatting rules
     let fullPrompt = `SYSTEM INSTRUCTIONS:\n${systemPrompt}\n\nCONVERSATION HISTORY:\n`;
@@ -50,9 +50,25 @@ app.post('/api/chat', async (req, res) => {
     }
     fullPrompt += `You:`; // Prompt the model to complete the next message
 
-    // Call Gemini to generate content
-    const result = await model.generateContent(fullPrompt);
-    const botMessage = result.response.text();
+    // Call Gemini with a simple automatic retry mechanism for 503 Overload errors
+    let botMessage = '';
+    let attempts = 0;
+    
+    while (attempts < 3) {
+      try {
+        const result = await model.generateContent(fullPrompt);
+        botMessage = result.response.text();
+        break; // Success! Exit the retry loop
+      } catch (err) {
+        attempts++;
+        if (err.status === 503 && attempts < 3) {
+          console.warn(`Gemini server overloaded (503). Retrying... attempt ${attempts}`);
+          await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds
+        } else {
+          throw err; // Throw if it's not a 503 or if we ran out of attempts
+        }
+      }
+    }
 
     res.json({ message: botMessage });
   } catch (error) {

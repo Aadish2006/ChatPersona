@@ -59,7 +59,7 @@ function App() {
 
     const userMessage = { role: 'user', content: text };
     const newMessages = [...messages, userMessage];
-    
+
     setMessages(newMessages);
     setInputValue('');
     setIsTyping(true);
@@ -134,7 +134,7 @@ function App() {
             </div>
           ))
         )}
-        
+
         {isTyping && (
           <div className="message-wrapper bot">
             <div className="typing-indicator">
@@ -158,8 +158,8 @@ function App() {
           onKeyDown={handleKeyDown}
           disabled={isTyping}
         />
-        <button 
-          className="send-button" 
+        <button
+          className="send-button"
           onClick={() => handleSendMessage(inputValue)}
           disabled={!inputValue.trim() || isTyping}
         >
