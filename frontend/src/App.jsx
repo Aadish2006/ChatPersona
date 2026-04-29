@@ -73,7 +73,7 @@ function App() {
         content: msg.content
       }));
 
-      const response = await axios.post('http://localhost:5001/api/chat', {
+      const response = await axios.post('https://chatpersona-8xfa.onrender.com/api/chat', {
         messages: apiMessages,
         persona: activePersona
       });
